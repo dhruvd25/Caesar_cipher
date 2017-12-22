@@ -1,0 +1,120 @@
+class Caesar{	
+	String readingTextFile(String fileName) {
+		String lineOut="";
+		try {
+			//creating the FileReader;
+			FileReader filereader = new FileReader(fileName);
+
+			//using the file reader and creating a BufferedReader
+			BufferedReader bufferedReader = new BufferedReader(filereader);
+
+			//reading the file, line by line
+			String line ="";
+
+			//readLine returns null once it has read all the lines!
+			while(line != null){
+				line = bufferedReader.readLine();
+				if(line!=null)
+					lineOut+=line+"\r\n";}
+			bufferedReader.close();
+			//Catching exceptions for IO and file not found
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) { 
+			e.printStackTrace();
+		}
+		return lineOut;
+	}
+	/*the following methods checks if the shift value is within 
+	 *a range of possible rotation or not, if not it uses the mod
+	 *function to change the value of shift accordingly */
+	int shiftCheck(int shift) {
+		if(shift>25) {
+			shift=shift%25;
+			return shift;}
+		else if(shift<0) {
+			shift=25-Math.abs(shift)%25;
+			return shift;}
+		else
+			return shift;}
+
+	String encipher(int shift,String plainText) {
+		char atPos;
+		String encipherOut="";
+		for(int i=0;i<plainText.length();i++) {
+			/* As the ascii code for 'a' is 97, subtracting 97 from the 
+			 * character which is read in gives a value in between 0-25
+			 * adding the shift to it and taking a mod with 26 we get the actual 
+			 * position of the resultant shift in the range of 0-25,once we have 
+			 * have the shift we just add it to initial ascii value of 'a' and get
+			 * the final enciphered position in the ascii range of a-z!
+			 * In case of A-Z, change the intial position to 65 as ascii value of
+			 * A is 65*/
+			if(plainText.charAt(i)>='a' && plainText.charAt(i)<='z') {
+				atPos=(char)(((plainText.charAt(i) - 97 + shift) % 26) + 97);
+				encipherOut +=atPos;}
+			else if(plainText.charAt(i)>='A' && plainText.charAt(i)<='Z') {
+				atPos=(char)(((plainText.charAt(i) - 65 + shift) % 26) + 65);
+				encipherOut +=atPos;}
+			else {		
+				//for every character other than a-z or A-Z we pass them as their original state
+				atPos= plainText.charAt(i);
+				encipherOut +=atPos;}
+		}
+		return encipherOut;
+	} 
+	String decipher(int shift,String cipheredText) {
+		char atPos;
+		if(shift>25||shift<0) {
+			shift=Math.abs(shift)%25;}
+		String decipherOut="";
+		for(int i=0;i<cipheredText.length();i++) {
+			/* As the ascii code for 'a' is 97, subtracting 97-26=71 from the 
+			 * character which is read in gives a value in between 0-25
+			 * subtracting the shift from it and taking a mod with 26 we get the actual 
+			 * position of the resultant shift in the range of 0-25,once we have 
+			 * have the shift we just add it to initial ascii value of 'a' and get
+			 * the final deciphered position in the ascii range of a-z!
+			 * In case of A-Z, change the intial position to 65-26=39 as ascii value of
+			 * A is 65*/
+			if(cipheredText.charAt(i)>='a' && cipheredText.charAt(i)<='z') {
+				atPos=(char)(((cipheredText.charAt(i) - 71 - shift) % 26) + 97);
+				decipherOut +=atPos;}
+			else if(cipheredText.charAt(i)>='A' && cipheredText.charAt(i)<='Z') {
+				atPos=(char)(((cipheredText.charAt(i) - 39 - shift) % 26) + 65);
+				decipherOut +=atPos;}
+			else {//for every character other than a-z or A-Z we pass them as their original state				
+				atPos= cipheredText.charAt(i);
+				decipherOut +=atPos;}
+		}
+		return decipherOut;
+	}
+	String FileOutput(String outputFileName,String cipherOut) {
+		String test="";
+		FileOutputStream fos;
+		try {//creating a file output stream 
+			fos = new FileOutputStream(outputFileName);
+			//creating a new print writer which writes out the stream 
+			PrintWriter pw = new PrintWriter(fos);
+			//we print it out to the txt file location we want to
+			pw.print(cipherOut);
+			//flushing the print writer 
+			pw.flush();
+			pw.close();}
+		//catching exceptions if file isn't found or file format isn't compatable
+		catch (FileNotFoundException e) { 
+			e.printStackTrace();}
+		return test;
+	}
+	boolean diff(String originalFile,String encDecFile) {
+		//the following function takes input of 
+		String decFileOut=readingTextFile(encDecFile);
+		String originalFileText=readingTextFile(originalFile);
+		if(originalFileText.equals(decFileOut)) {
+			System.out.println("Both files contain the same text!");
+			return true;}
+		else
+			System.out.println("The original file doesn't match the deciphered file!");
+		return false;
+	}
+}
