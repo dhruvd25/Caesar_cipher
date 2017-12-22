@@ -1,0 +1,31 @@
+package cipher;
+import java.io.*;
+class CaesarMain {
+	public static void main(String[] args) {
+		Caesar obj=new Caesar();
+		//taking the shift value for ciphering the file
+		int shift=obj.shiftCheck(2);
+
+		// reading in the original book from the .txt file
+		String orgFileLocation="input file LOCATION";
+		String input=obj.readingTextFile(orgFileLocation);
+
+		//Ciphering book with a shift of 2
+		String encipherIn=obj.encipher(shift,input);
+
+		//Writing the ciphered text to a txt file
+		String encipherFileLocation="OUTPUT FILE LOCATION";
+		obj.FileOutput(encipherFileLocation,encipherIn);
+
+		//Writing the deciphered text to a txt file
+		String decipherOut=obj.decipher(shift,encipherIn);
+		String decipherFileLocation="---------------------";
+		obj.FileOutput(decipherFileLocation,decipherOut);
+
+		//reading in the decBook.txt file to compare it with the original
+		String decFileName="-------------------";
+
+		//Checking if both the files are equal or not!
+		obj.diff(orgFileLocation,decFileName); 
+	} 
+}
